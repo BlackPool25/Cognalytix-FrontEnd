@@ -160,7 +160,7 @@ export function HomePage() {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: "clamp(12px, 3vw, 24px)",
           marginBottom: "clamp(20px, 3vw, 28px)",
         }}

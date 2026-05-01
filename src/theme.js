@@ -30,21 +30,21 @@ const LIGHT = {
 };
 
 const DARK = {
-  bgPrimary: "#1E1A18",
-  bgSecondary: "#2A2421",
-  bgElevated: "#332C28",
-  textPrimary: "#F1E7DC",
-  textSecondary: "#C6B7A6",
-  textMuted: "#9A8C7C",
-  accentPrimary: "#E09A7B",
-  accentSecondary: "#C08A6A",
-  accentSoft: "#8C5A44",
-  border: "#4A3F38",
-  inputBg: "#2F2926",
-  hover: "#3A322E",
-  highlightRose: "#B07A7A",
-  highlightSage: "#7C8F6A",
-  highlightAmber: "#B08968",
+  bgPrimary: "#282320",
+  bgSecondary: "#352F2A",
+  bgElevated: "#3E3732",
+  textPrimary: "#F6F0E8",
+  textSecondary: "#D0C3B3",
+  textMuted: "#A89B8D",
+  accentPrimary: "#E5A888",
+  accentSecondary: "#C99475",
+  accentSoft: "#97654F",
+  border: "#554A42",
+  inputBg: "#3A332F",
+  hover: "#463D37",
+  highlightRose: "#BC8888",
+  highlightSage: "#889976",
+  highlightAmber: "#BC9675",
 };
 
 /** Typography stacks (loaded in index.html). */
@@ -82,7 +82,7 @@ export function getT(dark) {
     fontUi: fonts.ui,
 
     /** WCAG-friendly text on filled accent buttons */
-    onAccent: dark ? "#1E1A18" : "#3E2F26",
+    onAccent: dark ? "#252019" : "#3E2F26",
 
     /** Sidebar / rail: warm strip off the main parchment */
     navBg: c.bgSecondary,
@@ -102,10 +102,10 @@ export function getT(dark) {
     growthSoft: rgba(c.highlightSage, dark ? 0.2 : 0.18),
     caution: c.highlightRose,
     cautionSoft: rgba(c.highlightRose, dark ? 0.22 : 0.2),
-    shadow: dark ? "0 4px 28px rgba(12, 8, 6, 0.42)" : "0 4px 28px rgba(62, 47, 38, 0.08)",
-    shadowSm: dark ? "0 2px 12px rgba(12, 8, 6, 0.35)" : "0 2px 12px rgba(62, 47, 38, 0.06)",
-    shadowLg: dark ? "0 12px 48px rgba(8, 5, 4, 0.55)" : "0 12px 40px rgba(62, 47, 38, 0.1)",
-    overlay: dark ? "rgba(22, 18, 16, 0.78)" : "rgba(244, 237, 228, 0.88)",
+    shadow: dark ? "0 4px 28px rgba(18, 14, 12, 0.38)" : "0 4px 28px rgba(62, 47, 38, 0.08)",
+    shadowSm: dark ? "0 2px 12px rgba(18, 14, 12, 0.32)" : "0 2px 12px rgba(62, 47, 38, 0.06)",
+    shadowLg: dark ? "0 12px 48px rgba(12, 9, 7, 0.48)" : "0 12px 40px rgba(62, 47, 38, 0.1)",
+    overlay: dark ? "rgba(32, 28, 24, 0.74)" : "rgba(244, 237, 228, 0.88)",
 
     /** Extra bar / chart accent (dusty blue-green off-palette, desaturated) */
     highlightCool: dark ? "#6B7B78" : "#8B9B96",

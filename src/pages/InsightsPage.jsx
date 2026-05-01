@@ -125,7 +125,7 @@ export function InsightsPage() {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "flex-start",
+          alignItems: "center",
           gap: "16px",
           flexWrap: "wrap",
           marginBottom: "8px",
