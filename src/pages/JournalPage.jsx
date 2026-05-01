@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { getJournal, listJournals } from "../api/journalsApi.js";
 import { Badge, IntensityDots } from "../components/Badge.jsx";
+import { BrandLockup } from "../components/BrandLockup.jsx";
 import { iCol } from "../theme.js";
 import { formatMediumDate } from "../utils/dates.js";
 
@@ -88,7 +89,7 @@ export function JournalPage() {
             border: "none",
             color: t.ember,
             fontSize: "13px",
-            fontFamily: "sans-serif",
+            fontFamily: "var(--font-ui)",
             cursor: "pointer",
             marginBottom: "28px",
             padding: 0,
@@ -97,7 +98,7 @@ export function JournalPage() {
         >
           ← Back to journal
         </button>
-        <p style={{ color: t.caution, fontFamily: "sans-serif" }}>{detailError}</p>
+        <p style={{ color: t.caution, fontFamily: "var(--font-ui)" }}>{detailError}</p>
       </div>
     );
   }
@@ -110,35 +111,46 @@ export function JournalPage() {
 
     return (
       <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-        <button
-          type="button"
-          onClick={() => setSelected(null)}
+        <div
           style={{
-            background: "none",
-            border: "none",
-            color: t.ember,
-            fontSize: "13px",
-            fontFamily: "sans-serif",
-            cursor: "pointer",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            gap: "12px",
             marginBottom: "28px",
-            padding: 0,
-            letterSpacing: "0.04em",
+            flexWrap: "wrap",
           }}
         >
-          ← Back to journal
-        </button>
+          <button
+            type="button"
+            onClick={() => setSelected(null)}
+            style={{
+              background: "none",
+              border: "none",
+              color: t.ember,
+              fontSize: "13px",
+              fontFamily: "var(--font-ui)",
+              cursor: "pointer",
+              padding: 0,
+              letterSpacing: "0.04em",
+            }}
+          >
+            ← Back to journal
+          </button>
+          <BrandLockup t={t} tagline={false} />
+        </div>
 
         <div style={{ marginBottom: "10px" }}>
           <Badge label={String(mood)} color={iCol(intensity, t)} bg={`${iCol(intensity, t)}1A`} />
         </div>
-        <h1 style={{ fontSize: "clamp(20px,3vw,26px)", fontFamily: "Georgia,serif", color: t.ink, fontWeight: 400, margin: "12px 0 6px" }}>
+        <h1 style={{ fontSize: "clamp(20px,3vw,26px)", fontFamily: "var(--font-display)", color: t.ink, fontWeight: 400, margin: "12px 0 6px" }}>
           {e.title}
         </h1>
         <div
           style={{
             fontSize: "12px",
             color: t.inkDim,
-            fontFamily: "sans-serif",
+            fontFamily: "var(--font-ui)",
             marginBottom: "32px",
             display: "flex",
             alignItems: "center",
@@ -148,16 +160,16 @@ export function JournalPage() {
           <span>{formatMediumDate(e.createdAt)}</span>
           <IntensityDots value={intensity} t={t} />
         </div>
-        <div style={{ height: "1px", background: t.surfaceEl, marginBottom: "32px" }} />
-        <p style={{ fontSize: "16px", lineHeight: "1.88", color: t.inkMid, fontFamily: "Georgia,serif" }}>{e.content}</p>
+        <div style={{ height: "1px", background: t.border, marginBottom: "32px" }} />
+        <p style={{ fontSize: "16px", lineHeight: "1.88", color: t.inkMid, fontFamily: "var(--font-display)" }}>{e.content}</p>
 
-        <div style={{ marginTop: "44px", paddingTop: "32px", borderTop: `1px solid ${t.surfaceEl}` }}>
+        <div style={{ marginTop: "44px", paddingTop: "32px", borderTop: `1px solid ${t.border}` }}>
           <div
             style={{
               fontSize: "10px",
               letterSpacing: "0.15em",
               color: t.inkDim,
-              fontFamily: "sans-serif",
+              fontFamily: "var(--font-ui)",
               textTransform: "uppercase",
               marginBottom: "18px",
             }}
@@ -165,7 +177,7 @@ export function JournalPage() {
             AI Analysis · Entry Sections
           </div>
           {sections.length === 0 && (
-            <p style={{ color: t.inkDim, fontStyle: "italic", fontFamily: "Georgia,serif" }}>
+            <p style={{ color: t.inkDim, fontStyle: "italic", fontFamily: "var(--font-display)" }}>
               {e.analysisStatus === "DONE"
                 ? "No sections were stored for this entry."
                 : `Analysis status: ${e.analysisStatus}`}
@@ -176,6 +188,7 @@ export function JournalPage() {
               key={s.id}
               style={{
                 background: t.surface,
+                border: `1px solid ${t.border}`,
                 borderRadius: "14px",
                 padding: "16px 20px",
                 boxShadow: t.shadowSm,
@@ -191,7 +204,7 @@ export function JournalPage() {
                 <IntensityDots value={s.intensity} t={t} />
               </div>
               {s.content && (
-                <p style={{ margin: "10px 0 0", fontSize: "13px", color: t.inkMid, fontFamily: "Georgia,serif", lineHeight: 1.6 }}>
+                <p style={{ margin: "10px 0 0", fontSize: "13px", color: t.inkMid, fontFamily: "var(--font-display)", lineHeight: 1.6 }}>
                   {s.content}
                 </p>
               )}
@@ -204,7 +217,7 @@ export function JournalPage() {
 
   if (selected && loadDetail) {
     return (
-      <div style={{ maxWidth: "700px", margin: "0 auto", color: t.inkDim, fontFamily: "Georgia,serif" }}>
+      <div style={{ maxWidth: "700px", margin: "0 auto", color: t.inkDim, fontFamily: "var(--font-display)" }}>
         Opening entry…
       </div>
     );
@@ -212,11 +225,33 @@ export function JournalPage() {
 
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "clamp(20px,3vw,26px)", fontFamily: "Georgia,serif", color: t.ink, fontWeight: 400, margin: "0 0 20px" }}>
-        Journal
-      </h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          gap: "16px",
+          flexWrap: "wrap",
+          marginBottom: "20px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "clamp(20px,3vw,26px)",
+            fontFamily: "var(--font-display)",
+            color: t.ink,
+            fontWeight: 400,
+            margin: 0,
+            flex: "1 1 200px",
+            minWidth: 0,
+          }}
+        >
+          Journal
+        </h1>
+        <BrandLockup t={t} tagline={false} />
+      </div>
       {error && (
-        <p style={{ color: t.caution, fontFamily: "sans-serif", marginBottom: "16px" }}>
+        <p style={{ color: t.caution, fontFamily: "var(--font-ui)", marginBottom: "16px" }}>
           {error}
         </p>
       )}
@@ -226,6 +261,7 @@ export function JournalPage() {
           alignItems: "center",
           gap: "10px",
           background: t.surface,
+          border: `1px solid ${t.border}`,
           borderRadius: "14px",
           padding: "11px 16px",
           boxShadow: t.shadowSm,
@@ -244,7 +280,7 @@ export function JournalPage() {
             outline: "none",
             fontSize: "13px",
             color: t.ink,
-            fontFamily: "sans-serif",
+            fontFamily: "var(--font-ui)",
             caretColor: t.ember,
           }}
         />
@@ -267,7 +303,7 @@ export function JournalPage() {
       </div>
 
       {loading ? (
-        <div style={{ color: t.inkDim, fontFamily: "Georgia,serif" }}>Loading entries…</div>
+        <div style={{ color: t.inkDim, fontFamily: "var(--font-display)" }}>Loading entries…</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {filtered.map((e) => {
@@ -281,6 +317,7 @@ export function JournalPage() {
                 onMouseLeave={() => setHov(null)}
                 style={{
                   background: t.surface,
+                  border: `1px solid ${t.border}`,
                   borderRadius: "16px",
                   padding: "18px 22px",
                   boxShadow: hov === e.id ? t.shadow : t.shadowSm,
@@ -300,7 +337,7 @@ export function JournalPage() {
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: "14px", fontWeight: 500, color: t.ink, fontFamily: "sans-serif", marginBottom: "6px" }}>
+                    <div style={{ fontSize: "14px", fontWeight: 500, color: t.ink, fontFamily: "var(--font-ui)", marginBottom: "6px" }}>
                       {e.title}
                     </div>
                     <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
@@ -308,7 +345,7 @@ export function JournalPage() {
                       <IntensityDots value={intensity} t={t} />
                     </div>
                   </div>
-                  <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif", flexShrink: 0, marginTop: "2px" }}>
+                  <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)", flexShrink: 0, marginTop: "2px" }}>
                     {formatMediumDate(e.createdAt)}
                   </span>
                 </div>
@@ -319,7 +356,7 @@ export function JournalPage() {
                     lineHeight: "1.6",
                     color: t.inkMid,
                     fontStyle: "italic",
-                    fontFamily: "Georgia,serif",
+                    fontFamily: "var(--font-display)",
                   }}
                 >
                   &ldquo;{(e.content || "").slice(0, 120)}…&rdquo;
@@ -328,7 +365,7 @@ export function JournalPage() {
             );
           })}
           {filtered.length === 0 && (
-            <div style={{ textAlign: "center", padding: "64px 0", color: t.inkDim, fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+            <div style={{ textAlign: "center", padding: "64px 0", color: t.inkDim, fontFamily: "var(--font-display)", fontStyle: "italic" }}>
               {search ? `No entries match "${search}"` : "No entries yet."}
             </div>
           )}

@@ -5,7 +5,7 @@ export function Badge({ label, color, bg }) {
     <span
       style={{
         fontSize: "10px",
-        fontFamily: "sans-serif",
+        fontFamily: "var(--font-ui)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
         padding: "3px 10px",

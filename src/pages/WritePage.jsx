@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import { getGrowthLatest } from "../api/insightsApi.js";
 import { createJournal, getJournal } from "../api/journalsApi.js";
 import { DirBadge } from "../components/Badge.jsx";
+import { BrandLockup } from "../components/BrandLockup.jsx";
 import { formatLongDate } from "../utils/dates.js";
 
 function sleep(ms) {
@@ -115,10 +116,10 @@ export function WritePage() {
               >
                 ◈
               </div>
-              <div style={{ fontSize: "16px", color: t.ink, fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+              <div style={{ fontSize: "16px", color: t.ink, fontFamily: "var(--font-display)", fontStyle: "italic" }}>
                 Reflecting on your entry...
               </div>
-              <div style={{ fontSize: "12px", color: t.inkDim, fontFamily: "sans-serif", marginTop: "8px" }}>
+              <div style={{ fontSize: "12px", color: t.inkDim, fontFamily: "var(--font-ui)", marginTop: "8px" }}>
                 Finding patterns across your history
               </div>
             </div>
@@ -126,6 +127,7 @@ export function WritePage() {
             <div
               style={{
                 background: t.surface,
+                border: `1px solid ${t.border}`,
                 borderRadius: "22px",
                 padding: "36px",
                 maxWidth: "500px",
@@ -135,7 +137,7 @@ export function WritePage() {
               onClick={(e) => e.stopPropagation()}
               role="dialog"
             >
-              <p style={{ color: t.caution, fontFamily: "sans-serif", marginBottom: "16px" }}>{errorMsg}</p>
+              <p style={{ color: t.caution, fontFamily: "var(--font-ui)", marginBottom: "16px" }}>{errorMsg}</p>
               <button
                 type="button"
                 onClick={resetForm}
@@ -147,7 +149,7 @@ export function WritePage() {
                   borderRadius: "12px",
                   color: t.ember,
                   fontSize: "13px",
-                  fontFamily: "sans-serif",
+                  fontFamily: "var(--font-ui)",
                   fontWeight: 700,
                   cursor: "pointer",
                 }}
@@ -159,6 +161,7 @@ export function WritePage() {
             <div
               style={{
                 background: t.surface,
+                border: `1px solid ${t.border}`,
                 borderRadius: "22px",
                 padding: "36px",
                 maxWidth: "500px",
@@ -176,13 +179,13 @@ export function WritePage() {
                       fontSize: "10px",
                       letterSpacing: "0.15em",
                       color: t.ember,
-                      fontFamily: "sans-serif",
+                      fontFamily: "var(--font-ui)",
                       textTransform: "uppercase",
                     }}
                   >
                     Mirror · Post Entry
                   </div>
-                  <div style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif" }}>
+                  <div style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>
                     {mirrorPayload?.dateLine}
                   </div>
                 </div>
@@ -193,7 +196,7 @@ export function WritePage() {
                   lineHeight: "1.78",
                   color: t.ink,
                   fontStyle: "italic",
-                  fontFamily: "Georgia,serif",
+                  fontFamily: "var(--font-display)",
                   margin: "0 0 18px",
                 }}
               >
@@ -201,7 +204,7 @@ export function WritePage() {
               </p>
               <DirBadge dir={mirrorPayload?.dir || "STABLE"} t={t} />
               {mirrorPayload?.sub && (
-                <p style={{ fontSize: "13px", color: t.inkMid, fontFamily: "Georgia,serif", margin: "16px 0 0", lineHeight: "1.65" }}>
+                <p style={{ fontSize: "13px", color: t.inkMid, fontFamily: "var(--font-display)", margin: "16px 0 0", lineHeight: "1.65" }}>
                   {mirrorPayload.sub}
                 </p>
               )}
@@ -217,7 +220,7 @@ export function WritePage() {
                   borderRadius: "12px",
                   color: t.ember,
                   fontSize: "13px",
-                  fontFamily: "sans-serif",
+                  fontFamily: "var(--font-ui)",
                   fontWeight: 700,
                   cursor: "pointer",
                   letterSpacing: "0.04em",
@@ -231,11 +234,12 @@ export function WritePage() {
       )}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "44px", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+        <div style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
           {formatLongDate(new Date().toISOString())}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <span style={{ fontSize: "12px", color: t.inkDim, fontFamily: "sans-serif" }}>{words} words</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", justifyContent: "flex-end" }}>
+          <BrandLockup t={t} tagline={false} />
+          <span style={{ fontSize: "12px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>{words} words</span>
           <button
             type="button"
             onClick={handleSave}
@@ -245,9 +249,9 @@ export function WritePage() {
               background: content.trim() && phase === "idle" ? t.ember : t.surfaceEl,
               border: "none",
               borderRadius: "12px",
-              color: content.trim() && phase === "idle" ? "#fff" : t.inkDim,
+              color: content.trim() && phase === "idle" ? t.onAccent : t.inkDim,
               fontSize: "13px",
-              fontFamily: "sans-serif",
+              fontFamily: "var(--font-ui)",
               fontWeight: 600,
               cursor: content.trim() && phase === "idle" ? "pointer" : "default",
               transition: "all 0.2s",
@@ -270,12 +274,12 @@ export function WritePage() {
           outline: "none",
           fontSize: "clamp(22px,3vw,30px)",
           color: t.ink,
-          fontFamily: "Georgia,serif",
+          fontFamily: "var(--font-display)",
           marginBottom: "20px",
           caretColor: t.ember,
         }}
       />
-      <div style={{ height: "1px", background: t.surfaceEl, marginBottom: "28px" }} />
+      <div style={{ height: "1px", background: t.border, marginBottom: "28px" }} />
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -287,7 +291,7 @@ export function WritePage() {
           outline: "none",
           fontSize: "16px",
           color: t.inkMid,
-          fontFamily: "Georgia,serif",
+          fontFamily: "var(--font-display)",
           lineHeight: "1.85",
           resize: "none",
           minHeight: "min(420px, 55vh)",

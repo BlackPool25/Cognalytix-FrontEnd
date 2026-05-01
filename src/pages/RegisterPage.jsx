@@ -51,6 +51,7 @@ export function RegisterPage() {
         minHeight: "100vh",
         background: t.bg,
         color: t.ink,
+        fontFamily: "var(--font-ui)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -79,8 +80,8 @@ export function RegisterPage() {
           >
             ◈
           </div>
-          <div style={{ fontSize: "22px", fontFamily: "Georgia,serif", fontWeight: 400 }}>Begin your mirror</div>
-          <div style={{ fontSize: "12px", color: t.inkDim, marginTop: "8px", fontFamily: "sans-serif" }}>
+          <div style={{ fontSize: "22px", fontFamily: "var(--font-display)", fontWeight: 400 }}>Begin your mirror</div>
+          <div style={{ fontSize: "12px", color: t.inkDim, marginTop: "8px", fontFamily: "var(--font-ui)" }}>
             Create a Cognalytix account
           </div>
         </div>
@@ -88,6 +89,7 @@ export function RegisterPage() {
         <div
           style={{
             background: t.surface,
+            border: `1px solid ${t.border}`,
             borderRadius: "18px",
             padding: "28px",
             boxShadow: t.shadowSm,
@@ -108,7 +110,7 @@ export function RegisterPage() {
                   width: "100%",
                   padding: "12px 14px",
                   borderRadius: "12px",
-                  border: `1px solid ${fieldErrors.name ? t.caution : t.surfaceHi}`,
+                  border: `1px solid ${fieldErrors.name ? t.caution : t.border}`,
                   background: t.surfaceEl,
                   color: t.ink,
                   fontSize: "14px",
@@ -133,7 +135,7 @@ export function RegisterPage() {
                   width: "100%",
                   padding: "12px 14px",
                   borderRadius: "12px",
-                  border: `1px solid ${fieldErrors.email ? t.caution : t.surfaceHi}`,
+                  border: `1px solid ${fieldErrors.email ? t.caution : t.border}`,
                   background: t.surfaceEl,
                   color: t.ink,
                   fontSize: "14px",
@@ -162,7 +164,7 @@ export function RegisterPage() {
                   width: "100%",
                   padding: "12px 14px",
                   borderRadius: "12px",
-                  border: `1px solid ${fieldErrors.password ? t.caution : t.surfaceHi}`,
+                  border: `1px solid ${fieldErrors.password ? t.caution : t.border}`,
                   background: t.surfaceEl,
                   color: t.ink,
                   fontSize: "14px",
@@ -184,7 +186,7 @@ export function RegisterPage() {
                   background: t.cautionSoft,
                   color: t.caution,
                   fontSize: "13px",
-                  fontFamily: "sans-serif",
+                  fontFamily: "var(--font-ui)",
                 }}
               >
                 {error}
@@ -200,9 +202,9 @@ export function RegisterPage() {
                 border: "none",
                 borderRadius: "12px",
                 background: submitting ? t.surfaceHi : t.ember,
-                color: "#fff",
+                color: submitting ? t.inkDim : t.onAccent,
                 fontSize: "14px",
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 fontWeight: 600,
                 cursor: submitting ? "default" : "pointer",
                 boxShadow: submitting ? "none" : `0 4px 16px ${t.ember}40`,
@@ -212,7 +214,7 @@ export function RegisterPage() {
             </button>
           </form>
 
-          <p style={{ textAlign: "center", marginTop: "20px", fontSize: "13px", color: t.inkMid, fontFamily: "sans-serif" }}>
+          <p style={{ textAlign: "center", marginTop: "20px", fontSize: "13px", color: t.inkMid, fontFamily: "var(--font-ui)" }}>
             Already have an account?{" "}
             <Link to="/login" style={{ color: t.ember, fontWeight: 600 }}>
               Sign in

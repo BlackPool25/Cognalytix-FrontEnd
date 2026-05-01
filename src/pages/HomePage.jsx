@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { getGrowthLatest } from "../api/insightsApi.js";
 import { listJournals } from "../api/journalsApi.js";
 import { Badge, DirBadge } from "../components/Badge.jsx";
+import { BrandLockup } from "../components/BrandLockup.jsx";
 import { iCol } from "../theme.js";
 import { formatLongDate, formatMediumDate, getWeekDays, localCalendarKey, localDayKey, todayLocalKey } from "../utils/dates.js";
 import { moodHistogram } from "../utils/journalStats.js";
@@ -135,11 +136,11 @@ export function HomePage() {
 
   const recent = entries.slice(0, 3);
   const moodBars = moodHistogram(entries).slice(0, 4);
-  const palette = [t.caution, t.ember, t.growth, "#7A8E9E"];
+  const palette = [t.highlightRose, t.ember, t.growth, t.highlightAmber];
 
   if (loading) {
     return (
-      <div style={{ maxWidth: "1080px", margin: "0 auto", color: t.inkDim, fontFamily: "Georgia,serif" }}>
+      <div style={{ maxWidth: "1080px", margin: "0 auto", color: t.inkDim, fontFamily: "var(--font-display)" }}>
         Loading your mirror…
       </div>
     );
@@ -147,7 +148,7 @@ export function HomePage() {
 
   if (error) {
     return (
-      <div style={{ maxWidth: "1080px", margin: "0 auto", color: t.caution, fontFamily: "sans-serif" }}>
+      <div style={{ maxWidth: "1080px", margin: "0 auto", color: t.caution, fontFamily: "var(--font-ui)" }}>
         {error}
       </div>
     );
@@ -155,30 +156,41 @@ export function HomePage() {
 
   return (
     <div style={{ maxWidth: "1080px", margin: "0 auto" }}>
-      <div style={{ marginBottom: "32px" }}>
-        <div
-          style={{
-            fontSize: "11px",
-            color: t.inkDim,
-            fontFamily: "sans-serif",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            marginBottom: "8px",
-          }}
-        >
-          {formatLongDate(new Date().toISOString())}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "clamp(12px, 3vw, 24px)",
+          marginBottom: "clamp(20px, 3vw, 28px)",
+        }}
+      >
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: "11px",
+              color: t.inkDim,
+              fontFamily: "var(--font-ui)",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              marginBottom: "8px",
+            }}
+          >
+            {formatLongDate(new Date().toISOString())}
+          </div>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "clamp(22px,3vw,30px)",
+              color: t.ink,
+              fontWeight: 400,
+              fontFamily: "var(--font-display)",
+            }}
+          >
+            {greetingFirstName(user?.name)}
+          </h1>
         </div>
-        <h1
-          style={{
-            margin: 0,
-            fontSize: "clamp(22px,3vw,30px)",
-            color: t.ink,
-            fontWeight: 400,
-            fontFamily: "Georgia,serif",
-          }}
-        >
-          {greetingFirstName(user?.name)}
-        </h1>
+        <BrandLockup t={t} tagline />
       </div>
 
       <div style={{ marginBottom: "48px", paddingLeft: "20px", position: "relative" }}>
@@ -198,7 +210,7 @@ export function HomePage() {
             fontSize: "10px",
             letterSpacing: "0.18em",
             color: t.ember,
-            fontFamily: "sans-serif",
+            fontFamily: "var(--font-ui)",
             textTransform: "uppercase",
             marginBottom: "10px",
           }}
@@ -213,7 +225,7 @@ export function HomePage() {
             fontStyle: "italic",
             margin: "0 0 14px",
             maxWidth: "640px",
-            fontFamily: "Georgia,serif",
+            fontFamily: "var(--font-display)",
           }}
         >
           &ldquo;{mirror.text}&rdquo;
@@ -223,13 +235,13 @@ export function HomePage() {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr clamp(260px,28%,320px)", gap: "28px", alignItems: "start" }}>
         <div>
-          <div style={{ background: t.surface, borderRadius: "18px", padding: "22px", boxShadow: t.shadowSm, marginBottom: "24px" }}>
+          <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: "18px", padding: "22px", boxShadow: t.shadowSm, marginBottom: "24px" }}>
             <div
               style={{
                 fontSize: "10px",
                 letterSpacing: "0.12em",
                 color: t.inkDim,
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 textTransform: "uppercase",
                 marginBottom: "18px",
               }}
@@ -259,7 +271,7 @@ export function HomePage() {
                     style={{
                       fontSize: "10px",
                       color: day.today ? t.ember : t.inkDim,
-                      fontFamily: "sans-serif",
+                      fontFamily: "var(--font-ui)",
                       fontWeight: day.today ? 700 : 400,
                     }}
                   >
@@ -291,15 +303,15 @@ export function HomePage() {
                       />
                     )}
                   </div>
-                  <span style={{ fontSize: "11px", color: day.today ? t.ink : t.inkDim, fontFamily: "sans-serif" }}>
+                  <span style={{ fontSize: "11px", color: day.today ? t.ink : t.inkDim, fontFamily: "var(--font-ui)" }}>
                     {day.dateNum}
                   </span>
                   {day.wrote ? (
-                    <span style={{ fontSize: "9px", color: iCol(day.intensity, t), fontFamily: "sans-serif", fontWeight: 600 }}>
+                    <span style={{ fontSize: "9px", color: iCol(day.intensity, t), fontFamily: "var(--font-ui)", fontWeight: 600 }}>
                       {day.intensity}/5
                     </span>
                   ) : (
-                    <span style={{ fontSize: "9px", color: t.inkDim, fontFamily: "sans-serif" }}>—</span>
+                    <span style={{ fontSize: "9px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>—</span>
                   )}
                 </div>
               ))}
@@ -312,7 +324,7 @@ export function HomePage() {
                 fontSize: "10px",
                 letterSpacing: "0.12em",
                 color: t.inkDim,
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 textTransform: "uppercase",
               }}
             >
@@ -326,7 +338,7 @@ export function HomePage() {
                 border: "none",
                 color: t.ember,
                 fontSize: "11px",
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 cursor: "pointer",
                 letterSpacing: "0.04em",
               }}
@@ -336,7 +348,7 @@ export function HomePage() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {recent.length === 0 && (
-              <div style={{ color: t.inkDim, fontFamily: "Georgia,serif", fontStyle: "italic", padding: "24px 0" }}>
+              <div style={{ color: t.inkDim, fontFamily: "var(--font-display)", fontStyle: "italic", padding: "24px 0" }}>
                 No entries yet — open Write and add your first reflection.
               </div>
             )}
@@ -351,6 +363,7 @@ export function HomePage() {
                   onClick={() => navigate("/journal", { state: { focusId: e.id } })}
                   style={{
                     background: t.surface,
+                    border: `1px solid ${t.border}`,
                     borderRadius: "16px",
                     padding: "18px 20px",
                     boxShadow: hovEntry === e.id ? t.shadow : t.shadowSm,
@@ -369,10 +382,10 @@ export function HomePage() {
                       gap: "12px",
                     }}
                   >
-                    <span style={{ fontSize: "14px", fontWeight: 500, color: t.ink, fontFamily: "sans-serif" }}>{e.title}</span>
+                    <span style={{ fontSize: "14px", fontWeight: 500, color: t.ink, fontFamily: "var(--font-ui)" }}>{e.title}</span>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
                       <Badge label={mood} color={iCol(inten, t)} bg={`${iCol(inten, t)}1A`} />
-                      <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif" }}>
+                      <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>
                         {formatMediumDate(e.createdAt).split(",")[0]}
                       </span>
                     </div>
@@ -384,7 +397,7 @@ export function HomePage() {
                       lineHeight: "1.6",
                       color: t.inkMid,
                       fontStyle: "italic",
-                      fontFamily: "Georgia,serif",
+                      fontFamily: "var(--font-display)",
                     }}
                   >
                     &ldquo;{(e.content || "").slice(0, 110)}
@@ -397,13 +410,13 @@ export function HomePage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-          <div style={{ background: t.surface, borderRadius: "18px", padding: "20px", boxShadow: t.shadowSm }}>
+          <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: "18px", padding: "20px", boxShadow: t.shadowSm }}>
             <div
               style={{
                 fontSize: "10px",
                 letterSpacing: "0.12em",
                 color: t.inkDim,
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 textTransform: "uppercase",
                 marginBottom: "12px",
               }}
@@ -419,7 +432,7 @@ export function HomePage() {
                     lineHeight: "1.65",
                     color: t.inkMid,
                     fontStyle: "italic",
-                    fontFamily: "Georgia,serif",
+                    fontFamily: "var(--font-display)",
                   }}
                 >
                   &ldquo;{todayCard.insight}&rdquo;
@@ -435,13 +448,13 @@ export function HomePage() {
                       }}
                     />
                   </div>
-                  <span style={{ fontSize: "11px", color: t.growth, fontFamily: "sans-serif", fontWeight: 600 }}>
+                  <span style={{ fontSize: "11px", color: t.growth, fontFamily: "var(--font-ui)", fontWeight: 600 }}>
                     {todayCard.intensity.toFixed(1)} / 5
                   </span>
                 </div>
               </>
             ) : (
-              <p style={{ margin: 0, fontSize: "13px", color: t.inkDim, fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+              <p style={{ margin: 0, fontSize: "13px", color: t.inkDim, fontFamily: "var(--font-display)", fontStyle: "italic" }}>
                 Write today or wait for analysis to finish — your dominant mood will land here.
               </p>
             )}
@@ -453,6 +466,7 @@ export function HomePage() {
                 borderRadius: "18px",
                 padding: "20px",
                 background: `linear-gradient(140deg,${t.emberSoft},${t.surfaceEl})`,
+                border: `1px solid ${t.border}`,
                 boxShadow: t.shadowSm,
               }}
             >
@@ -463,26 +477,26 @@ export function HomePage() {
                     fontSize: "10px",
                     letterSpacing: "0.12em",
                     color: t.ember,
-                    fontFamily: "sans-serif",
+                    fontFamily: "var(--font-ui)",
                     textTransform: "uppercase",
                   }}
                 >
                   Milestone · {totalEntries} Entries
                 </span>
               </div>
-              <p style={{ margin: 0, fontSize: "13px", lineHeight: "1.65", color: t.inkMid, fontFamily: "Georgia,serif" }}>
+              <p style={{ margin: 0, fontSize: "13px", lineHeight: "1.65", color: t.inkMid, fontFamily: "var(--font-display)" }}>
                 You&apos;ve crossed a depth threshold — the mirror has enough signal to show trajectory, not noise.
               </p>
             </div>
           )}
 
-          <div style={{ background: t.surface, borderRadius: "18px", padding: "20px", boxShadow: t.shadowSm }}>
+          <div style={{ background: t.surface, border: `1px solid ${t.border}`, borderRadius: "18px", padding: "20px", boxShadow: t.shadowSm }}>
             <div
               style={{
                 fontSize: "10px",
                 letterSpacing: "0.12em",
                 color: t.inkDim,
-                fontFamily: "sans-serif",
+                fontFamily: "var(--font-ui)",
                 textTransform: "uppercase",
                 marginBottom: "16px",
               }}
@@ -490,13 +504,13 @@ export function HomePage() {
               Emotional Range
             </div>
             {moodBars.length === 0 ? (
-              <p style={{ margin: 0, fontSize: "12px", color: t.inkDim, fontFamily: "Georgia,serif" }}>No analyzed moods yet.</p>
+              <p style={{ margin: 0, fontSize: "12px", color: t.inkDim, fontFamily: "var(--font-display)" }}>No analyzed moods yet.</p>
             ) : (
               moodBars.map((r, idx) => (
                 <div key={r.label} style={{ marginBottom: "13px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-                    <span style={{ fontSize: "12px", fontFamily: "sans-serif", color: t.inkMid }}>{r.label}</span>
-                    <span style={{ fontSize: "11px", color: palette[idx % palette.length], fontFamily: "sans-serif", fontWeight: 600 }}>
+                    <span style={{ fontSize: "12px", fontFamily: "var(--font-ui)", color: t.inkMid }}>{r.label}</span>
+                    <span style={{ fontSize: "11px", color: palette[idx % palette.length], fontFamily: "var(--font-ui)", fontWeight: 600 }}>
                       {r.pct}%
                     </span>
                   </div>

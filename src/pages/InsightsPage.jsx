@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import { getGrowthLatest } from "../api/insightsApi.js";
 import { listJournals } from "../api/journalsApi.js";
 import { Badge, DirBadge } from "../components/Badge.jsx";
+import { BrandLockup } from "../components/BrandLockup.jsx";
 import { formatMediumDate } from "../utils/dates.js";
 
 function dirFromGrowth(res) {
@@ -104,7 +105,7 @@ export function InsightsPage() {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: "820px", margin: "0 auto", color: t.inkDim, fontFamily: "Georgia,serif" }}>
+      <div style={{ maxWidth: "820px", margin: "0 auto", color: t.inkDim, fontFamily: "var(--font-display)" }}>
         Gathering patterns…
       </div>
     );
@@ -112,7 +113,7 @@ export function InsightsPage() {
 
   if (error) {
     return (
-      <div style={{ maxWidth: "820px", margin: "0 auto", color: t.caution, fontFamily: "sans-serif" }}>
+      <div style={{ maxWidth: "820px", margin: "0 auto", color: t.caution, fontFamily: "var(--font-ui)" }}>
         {error}
       </div>
     );
@@ -120,10 +121,22 @@ export function InsightsPage() {
 
   return (
     <div style={{ maxWidth: "820px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "clamp(20px,3vw,26px)", fontFamily: "Georgia,serif", color: t.ink, fontWeight: 400, margin: "0 0 6px" }}>
-        Your Growth
-      </h1>
-      <p style={{ fontSize: "14px", color: t.inkDim, fontFamily: "sans-serif", margin: "0 0 40px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "16px",
+          flexWrap: "wrap",
+          marginBottom: "8px",
+        }}
+      >
+        <h1 style={{ fontSize: "clamp(20px,3vw,26px)", fontFamily: "var(--font-display)", color: t.ink, fontWeight: 400, margin: 0, flex: "1 1 220px", minWidth: 0 }}>
+          Your Growth
+        </h1>
+        <BrandLockup t={t} tagline={false} />
+      </div>
+      <p style={{ fontSize: "14px", color: t.inkDim, fontFamily: "var(--font-ui)", margin: "0 0 40px" }}>
         Patterns your data has noticed. You might not have.
       </p>
 
@@ -134,7 +147,7 @@ export function InsightsPage() {
               fontSize: "10px",
               letterSpacing: "0.15em",
               color: t.inkDim,
-              fontFamily: "sans-serif",
+              fontFamily: "var(--font-ui)",
               textTransform: "uppercase",
               marginBottom: "16px",
             }}
@@ -147,6 +160,7 @@ export function InsightsPage() {
                 key={i}
                 style={{
                   background: `linear-gradient(140deg,${t.emberSoft},${t.surfaceEl})`,
+                  border: `1px solid ${t.border}`,
                   borderRadius: "18px",
                   padding: "22px",
                   boxShadow: t.shadowSm,
@@ -159,14 +173,14 @@ export function InsightsPage() {
                       fontSize: "10px",
                       letterSpacing: "0.12em",
                       color: t.ember,
-                      fontFamily: "sans-serif",
+                      fontFamily: "var(--font-ui)",
                       textTransform: "uppercase",
                     }}
                   >
                     {m.count} Entries
                   </span>
                 </div>
-                <p style={{ margin: "0 0 16px", fontSize: "14px", lineHeight: "1.7", color: t.inkMid, fontFamily: "Georgia,serif" }}>{m.text}</p>
+                <p style={{ margin: "0 0 16px", fontSize: "14px", lineHeight: "1.7", color: t.inkMid, fontFamily: "var(--font-display)" }}>{m.text}</p>
                 <DirBadge dir={m.dir} t={t} />
               </div>
             ))}
@@ -180,7 +194,7 @@ export function InsightsPage() {
             fontSize: "10px",
             letterSpacing: "0.15em",
             color: t.inkDim,
-            fontFamily: "sans-serif",
+            fontFamily: "var(--font-ui)",
             textTransform: "uppercase",
             marginBottom: "20px",
           }}
@@ -188,7 +202,7 @@ export function InsightsPage() {
           Pattern Timeline
         </div>
         {timeline.length === 0 ? (
-          <p style={{ color: t.inkDim, fontFamily: "Georgia,serif", fontStyle: "italic" }}>
+          <p style={{ color: t.inkDim, fontFamily: "var(--font-display)", fontStyle: "italic" }}>
             No mirror narratives yet — finish a few analyzed entries and check back.
           </p>
         ) : (
@@ -228,6 +242,7 @@ export function InsightsPage() {
                   style={{
                     flex: 1,
                     background: t.surface,
+                    border: `1px solid ${t.border}`,
                     borderRadius: "16px",
                     padding: "18px 22px",
                     boxShadow: hov === i ? t.shadow : t.shadowSm,
@@ -249,7 +264,7 @@ export function InsightsPage() {
                       <DirBadge dir={g.dir} t={t} />
                       <Badge label={g.type} color={t.inkMid} bg={t.surfaceEl} />
                     </div>
-                    <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif" }}>{g.date}</span>
+                    <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>{g.date}</span>
                   </div>
                   <p
                     style={{
@@ -258,12 +273,12 @@ export function InsightsPage() {
                       lineHeight: "1.75",
                       color: t.ink,
                       fontStyle: "italic",
-                      fontFamily: "Georgia,serif",
+                      fontFamily: "var(--font-display)",
                     }}
                   >
                     &ldquo;{g.narration}&rdquo;
                   </p>
-                  <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "sans-serif" }}>Topic: {g.topic}</span>
+                  <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>Topic: {g.topic}</span>
                 </div>
               </div>
             ))}
