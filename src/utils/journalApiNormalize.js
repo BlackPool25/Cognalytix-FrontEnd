@@ -4,6 +4,10 @@ function labelRef(ref) {
   return {
     id: ref.id,
     label: ref.label,
+    displayText: ref.displayText ?? ref.label,
+    category: ref.category ?? null,
+    topic: ref.topic ?? null,
+    detail: ref.detail ?? null,
   };
 }
 

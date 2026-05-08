@@ -82,6 +82,7 @@ export function InsightsPage() {
               id: entry.id,
               dir: g ? dirFromGrowth(g) : "STABLE",
               type: g?.hasTrajectory ? "Post-Entry" : "Snapshot",
+              patternType: g?.patternType || null,
               topic,
               date: formatMediumDate(entry.createdAt),
               narration: text,
@@ -260,9 +261,12 @@ export function InsightsPage() {
                       gap: "8px",
                     }}
                   >
-                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
                       <DirBadge dir={g.dir} t={t} />
                       <Badge label={g.type} color={t.inkMid} bg={t.surfaceEl} />
+                      {g.patternType && (
+                        <Badge label={g.patternType.replace(/_/g, " ")} color={t.ember} bg={t.emberSoft} />
+                      )}
                     </div>
                     <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>{g.date}</span>
                   </div>

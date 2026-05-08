@@ -253,8 +253,13 @@ export function JournalPage() {
                       }}
                     >
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: redundant ? 0 : "8px" }}>
-                        <Badge label={s.topic?.label || "—"} color={t.ember} bg={t.emberSoft} />
-                        <Badge label={s.emotion?.label || "—"} color={iCol(s.intensity, t)} bg={`${iCol(s.intensity, t)}1A`} />
+                        <Badge label={s.topic?.displayText || s.topic?.label || "—"} color={t.ember} bg={t.emberSoft} />
+                        {s.topic?.category && (
+                          <span style={{ fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 6px", borderRadius: "999px", background: t.surfaceEl, color: t.inkDim, fontFamily: "var(--font-ui)", fontWeight: 600, border: `1px solid ${t.border}` }}>
+                            {s.topic.category}
+                          </span>
+                        )}
+                        <Badge label={s.emotion?.displayText || s.emotion?.label || "—"} color={iCol(s.intensity, t)} bg={`${iCol(s.intensity, t)}1A`} />
                         <IntensityDots value={s.intensity} t={t} />
                       </div>
                       {redundant ? (
@@ -493,8 +498,13 @@ export function JournalPage() {
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
                       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                        <Badge label={s.topic?.label || "—"} color={t.ember} bg={t.emberSoft} />
-                        <Badge label={s.emotion?.label || "—"} color={iCol(s.intensity, t)} bg={`${iCol(s.intensity, t)}1A`} />
+                        <Badge label={s.topic?.displayText || s.topic?.label || "—"} color={t.ember} bg={t.emberSoft} />
+                        {s.topic?.category && (
+                          <span style={{ fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 6px", borderRadius: "999px", background: t.surfaceEl, color: t.inkDim, fontFamily: "var(--font-ui)", fontWeight: 600, border: `1px solid ${t.border}` }}>
+                            {s.topic.category}
+                          </span>
+                        )}
+                        <Badge label={s.emotion?.displayText || s.emotion?.label || "—"} color={iCol(s.intensity, t)} bg={`${iCol(s.intensity, t)}1A`} />
                       </div>
                       <IntensityDots value={s.intensity} t={t} />
                     </div>
