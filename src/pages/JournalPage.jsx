@@ -18,6 +18,10 @@ function dirFromGrowth(res) {
   return "STABLE";
 }
 
+function isAnalysisRunning(entry) {
+  return entry?.analysisStatus === "PENDING" || Boolean(entry?.analysisState?.inProgress);
+}
+
 export function JournalPage() {
   const { t } = useOutletContext();
   const location = useLocation();
@@ -31,6 +35,7 @@ export function JournalPage() {
   const [error, setError] = useState(null);
   const [detailError, setDetailError] = useState(null);
   const [growth, setGrowth] = useState(null);
+  const [showPattern, setShowPattern] = useState(false);
 
   useEffect(() => {
     let cancel = false;
@@ -81,6 +86,34 @@ export function JournalPage() {
       cancel = true;
     };
   }, [selected]);
+
+  useEffect(() => {
+    const shouldPollList = list.some((entry) => isAnalysisRunning(entry));
+    const shouldPollDetail =
+      Boolean(selected) &&
+      (!detail || (detail.id === selected && isAnalysisRunning(detail)));
+    if (!shouldPollList && !shouldPollDetail) return;
+
+    let cancelled = false;
+    const intervalId = setInterval(async () => {
+      try {
+        const [page, detailLatest] = await Promise.all([
+          listJournals({ page: 0, size: 100 }),
+          shouldPollDetail ? getJournal(selected) : Promise.resolve(null),
+        ]);
+        if (cancelled) return;
+        setList(page.content || []);
+        if (detailLatest) setDetail(detailLatest);
+      } catch {
+        // Keep existing UI state on background polling errors.
+      }
+    }, 2500);
+
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [list, selected, detail]);
 
   useEffect(() => {
     if (!selected || !detail || detail.id !== selected || detail.analysisStatus !== "DONE") {
@@ -291,7 +324,7 @@ export function JournalPage() {
           </div>
 
           <aside className="journal-analysis-col">
-            {(e.analysisStatus === "PENDING" || e.analysisState?.inProgress) && (
+            {isAnalysisRunning(e) && (
               <p
                 style={{
                   margin: "0 0 16px",
@@ -300,8 +333,12 @@ export function JournalPage() {
                   fontFamily: "var(--font-ui)",
                   fontStyle: "italic",
                   lineHeight: 1.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
+                <span style={{ display: "inline-block", animation: "spin 1.2s linear infinite", fontSize: "13px" }}>◌</span>
                 Analysis is still running — check back shortly for the reflection and topic breakdown.
               </p>
             )}
@@ -455,6 +492,85 @@ export function JournalPage() {
                   </p>
                 )}
                 <DirBadge dir={dirFromGrowth(growth)} t={t} />
+
+                {growth.trajectory.trajectoryFacts && (
+                  <div style={{ marginTop: "12px" }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowPattern(p => !p)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                        fontSize: "9px",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: t.inkDim,
+                        fontFamily: "var(--font-ui)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <span style={{ transition: "transform 0.2s", transform: showPattern ? "rotate(90deg)" : "rotate(0deg)", display: "inline-block" }}>▸</span>
+                      Pattern details
+                    </button>
+
+                    {showPattern && (() => {
+                      const tf = growth.trajectory.trajectoryFacts;
+                      const priorFam = tf?.priorDominantEmotionFamily || "—";
+                      const currFam = tf?.currentDominantEmotionFamily || "—";
+                      const priorInt = tf?.priorDominantAvgIntensity != null ? Number(tf.priorDominantAvgIntensity).toFixed(1) : null;
+                      const currInt = tf?.currentDominantAvgIntensity != null ? Number(tf.currentDominantAvgIntensity).toFixed(1) : null;
+                      const topicFam = tf?.topicFamilyKey || tf?.topicDisplayLabel || "—";
+                      const priorJournals = tf?.priorDistinctJournalCount ?? "—";
+                      return (
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            padding: "10px 12px",
+                            borderRadius: "10px",
+                            background: t.surfaceEl,
+                            border: `1px solid ${t.border}`,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "6px",
+                          }}
+                        >
+                          <div style={{ fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: t.inkDim, fontFamily: "var(--font-ui)", marginBottom: "2px" }}>
+                            Topic: {topicFam}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: t.inkMid, fontFamily: "var(--font-ui)" }}>
+                            <span>Before:</span>
+                            <Badge label={priorFam} color={t.inkMid} bg={t.surfaceEl} />
+                            {priorInt != null && (
+                              <span style={{ fontSize: "10px", color: t.inkDim }}>
+                                intensity <span style={{ color: t.inkMid, fontWeight: 600 }}>{priorInt}</span>
+                              </span>
+                            )}
+                            <span style={{ fontSize: "10px", color: t.inkDim }}>({priorJournals} entries)</span>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: t.inkMid, fontFamily: "var(--font-ui)" }}>
+                            <span>After:</span>
+                            <Badge label={currFam} color={t.ember} bg={t.emberSoft} />
+                            {currInt != null && (
+                              <span style={{ fontSize: "10px", color: t.inkDim }}>
+                                intensity <span style={{ color: t.inkMid, fontWeight: 600 }}>{currInt}</span>
+                              </span>
+                            )}
+                          </div>
+                          {priorInt != null && currInt != null && (
+                            <div style={{ fontSize: "10px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>
+                              Shift: {currInt < priorInt ? "↓" : currInt > priorInt ? "↑" : "→"}{" "}
+                              {Math.abs(parseFloat(currInt) - parseFloat(priorInt)).toFixed(1)} — {currInt < priorInt ? "softer emotional tone" : currInt > priorInt ? "heightened emotional tone" : "stable intensity"}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             )}
 
@@ -626,6 +742,7 @@ export function JournalPage() {
           {filtered.map((e) => {
             const mood = e.moodAnalysis?.moodLabel || (e.analysisStatus === "DONE" ? "—" : e.analysisStatus);
             const intensity = e.moodAnalysis?.intensity ?? 0;
+            const running = isAnalysisRunning(e);
             return (
               <div
                 key={e.id}
@@ -666,6 +783,24 @@ export function JournalPage() {
                     {formatMediumDate(e.createdAt)}
                   </span>
                 </div>
+                {running && (
+                  <div
+                    style={{
+                      marginBottom: "8px",
+                      fontSize: "10px",
+                      color: t.inkDim,
+                      fontFamily: "var(--font-ui)",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <span style={{ display: "inline-block", animation: "spin 1.2s linear infinite" }}>◌</span>
+                    Analysis running
+                  </div>
+                )}
                 <p
                   style={{
                     margin: 0,

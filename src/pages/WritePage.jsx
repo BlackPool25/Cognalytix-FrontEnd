@@ -1,76 +1,28 @@
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { getGrowthLatest } from "../api/insightsApi.js";
-import { createJournal, getJournal } from "../api/journalsApi.js";
-import { DirBadge } from "../components/Badge.jsx";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { createJournal } from "../api/journalsApi.js";
 import { BrandLockup } from "../components/BrandLockup.jsx";
 import { formatLongDate } from "../utils/dates.js";
 
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-function dirFromGrowth(res) {
-  const d = res?.trajectory?.mirrorCard?.direction;
-  if (d === "GROWTH" || d === "REGRESSION" || d === "STABLE") return d;
-  return "REGRESSION";
-}
-
 export function WritePage() {
   const { t } = useOutletContext();
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [phase, setPhase] = useState("idle"); // idle | analyzing | mirror | error
+  const [phase, setPhase] = useState("idle"); // idle | saving | error
   const [errorMsg, setErrorMsg] = useState(null);
-  const [mirrorPayload, setMirrorPayload] = useState(null);
   const words = content.trim() ? content.trim().split(/\s+/).length : 0;
 
   const handleSave = async () => {
     if (!content.trim() || phase !== "idle") return;
     setErrorMsg(null);
-    setPhase("analyzing");
+    setPhase("saving");
     try {
       const created = await createJournal({
         title: title.trim() || "Untitled",
         content: content.trim(),
       });
-      const id = created.id;
-
-      const deadline = Date.now() + 180_000;
-      let last = created;
-      while (Date.now() < deadline) {
-        last = await getJournal(id);
-        if (last.analysisStatus === "DONE" || last.analysisStatus === "FAILED") break;
-        await sleep(2000);
-      }
-
-      let growth = null;
-      if (last.analysisStatus === "DONE") {
-        for (let i = 0; i < 8; i++) {
-          growth = await getGrowthLatest(id);
-          if (growth.hasTrajectory || growth.mirrorReady) break;
-          await sleep(2500);
-        }
-      }
-
-      const primary =
-        growth?.trajectory?.mirrorCard?.integratedBody ||
-        growth?.trajectory?.mirrorCard?.headline ||
-        growth?.day?.summaryInsight ||
-        (last.analysisStatus === "FAILED"
-          ? "Analysis did not complete — your entry is saved and you can try Reanalyze from the journal."
-          : "Your entry is saved. When patterns emerge, they will appear here.");
-
-      setMirrorPayload({
-        text: primary,
-        sub:
-          growth?.trajectory?.mirrorCard?.trajectoryLine ||
-          growth?.day?.dominantMoodLabel ||
-          "",
-        dir: dirFromGrowth(growth),
-        dateLine: formatLongDate(last.createdAt),
-      });
-      setPhase("mirror");
+      navigate("/journal", { state: { focusId: created.id } });
     } catch (e) {
       setErrorMsg(e.message || "Could not save entry");
       setPhase("error");
@@ -79,15 +31,12 @@ export function WritePage() {
 
   const resetForm = () => {
     setPhase("idle");
-    setTitle("");
-    setContent("");
-    setMirrorPayload(null);
     setErrorMsg(null);
   };
 
   return (
     <div style={{ maxWidth: "680px", margin: "0 auto", position: "relative" }}>
-      {(phase === "analyzing" || phase === "mirror" || phase === "error") && (
+      {(phase === "saving" || phase === "error") && (
         <div
           style={{
             position: "fixed",
@@ -100,11 +49,11 @@ export function WritePage() {
             justifyContent: "center",
             padding: "24px",
           }}
-          onClick={() => phase === "mirror" && resetForm()}
-          onKeyDown={(e) => e.key === "Escape" && phase === "mirror" && resetForm()}
+          onClick={() => phase === "error" && resetForm()}
+          onKeyDown={(e) => e.key === "Escape" && phase === "error" && resetForm()}
           role="presentation"
         >
-          {phase === "analyzing" ? (
+          {phase === "saving" ? (
             <div style={{ textAlign: "center" }}>
               <div
                 style={{
@@ -117,10 +66,10 @@ export function WritePage() {
                 ◈
               </div>
               <div style={{ fontSize: "16px", color: t.ink, fontFamily: "var(--font-display)", fontStyle: "italic" }}>
-                Reflecting on your entry...
+                Saving your entry...
               </div>
               <div style={{ fontSize: "12px", color: t.inkDim, fontFamily: "var(--font-ui)", marginTop: "8px" }}>
-                Finding patterns across your history
+                Analysis runs in the background, you can continue right away.
               </div>
             </div>
           ) : phase === "error" ? (
@@ -157,79 +106,7 @@ export function WritePage() {
                 Close
               </button>
             </div>
-          ) : (
-            <div
-              style={{
-                background: t.surface,
-                border: `1px solid ${t.border}`,
-                borderRadius: "22px",
-                padding: "36px",
-                maxWidth: "500px",
-                width: "100%",
-                boxShadow: t.shadowLg,
-              }}
-              onClick={(e) => e.stopPropagation()}
-              role="dialog"
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-                <span style={{ fontSize: "22px" }}>◈</span>
-                <div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      letterSpacing: "0.15em",
-                      color: t.ember,
-                      fontFamily: "var(--font-ui)",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Mirror · Post Entry
-                  </div>
-                  <div style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>
-                    {mirrorPayload?.dateLine}
-                  </div>
-                </div>
-              </div>
-              <p
-                style={{
-                  fontSize: "17px",
-                  lineHeight: "1.78",
-                  color: t.ink,
-                  fontStyle: "italic",
-                  fontFamily: "var(--font-display)",
-                  margin: "0 0 18px",
-                }}
-              >
-                &ldquo;{mirrorPayload?.text}&rdquo;
-              </p>
-              <DirBadge dir={mirrorPayload?.dir || "STABLE"} t={t} />
-              {mirrorPayload?.sub && (
-                <p style={{ fontSize: "13px", color: t.inkMid, fontFamily: "var(--font-display)", margin: "16px 0 0", lineHeight: "1.65" }}>
-                  {mirrorPayload.sub}
-                </p>
-              )}
-              <button
-                type="button"
-                onClick={resetForm}
-                style={{
-                  marginTop: "24px",
-                  width: "100%",
-                  padding: "13px",
-                  background: t.emberSoft,
-                  border: "none",
-                  borderRadius: "12px",
-                  color: t.ember,
-                  fontSize: "13px",
-                  fontFamily: "var(--font-ui)",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  letterSpacing: "0.04em",
-                }}
-              >
-                Continue →
-              </button>
-            </div>
-          )}
+          ) : null}
         </div>
       )}
 

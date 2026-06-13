@@ -28,6 +28,7 @@ export function InsightsPage() {
   const [milestones, setMilestones] = useState([]);
   const [timeline, setTimeline] = useState([]);
   const [hov, setHov] = useState(null);
+  const [expandedInsight, setExpandedInsight] = useState(null);
 
   useEffect(() => {
     let cancel = false;
@@ -83,6 +84,10 @@ export function InsightsPage() {
               dir: g ? dirFromGrowth(g) : "STABLE",
               type: g?.hasTrajectory ? "Post-Entry" : "Snapshot",
               patternType: g?.patternType || null,
+              trajectoryFacts: g?.trajectory?.trajectoryFacts || null,
+              headline: g?.trajectory?.mirrorCard?.headline || null,
+              dayAnchorLine: g?.trajectory?.mirrorCard?.dayAnchorLine || null,
+              trajectoryLine: g?.trajectory?.mirrorCard?.trajectoryLine || null,
               topic,
               date: formatMediumDate(entry.createdAt),
               narration: text,
@@ -283,6 +288,74 @@ export function InsightsPage() {
                     &ldquo;{g.narration}&rdquo;
                   </p>
                   <span style={{ fontSize: "11px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>Topic: {g.topic}</span>
+                  {g.trajectoryFacts && (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedInsight(expandedInsight === g.id ? null : g.id)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        cursor: "pointer",
+                        fontSize: "9px",
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: t.inkDim,
+                        fontFamily: "var(--font-ui)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        marginTop: "6px",
+                      }}
+                    >
+                      <span style={{ transition: "transform 0.2s", transform: expandedInsight === g.id ? "rotate(90deg)" : "rotate(0deg)", display: "inline-block" }}>▸</span>
+                      {expandedInsight === g.id ? "Hide" : "Show"} pattern details
+                    </button>
+                  )}
+                  {expandedInsight === g.id && g.trajectoryFacts && (() => {
+                    const tf = g.trajectoryFacts;
+                    const priorFam = tf?.priorDominantEmotionFamily || "—";
+                    const currFam = tf?.currentDominantEmotionFamily || "—";
+                    const priorInt = tf?.priorDominantAvgIntensity != null ? Number(tf.priorDominantAvgIntensity).toFixed(1) : null;
+                    const currInt = tf?.currentDominantAvgIntensity != null ? Number(tf.currentDominantAvgIntensity).toFixed(1) : null;
+                    const topicFam = tf?.topicFamilyKey || tf?.topicDisplayLabel || "—";
+                    const priorJournals = tf?.priorDistinctJournalCount ?? "—";
+                    return (
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          padding: "10px 12px",
+                          borderRadius: "10px",
+                          background: t.surfaceEl,
+                          border: `1px solid ${t.border}`,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "6px",
+                        }}
+                      >
+                        <div style={{ fontSize: "9px", letterSpacing: "0.08em", textTransform: "uppercase", color: t.inkDim, fontFamily: "var(--font-ui)", marginBottom: "2px" }}>
+                          Topic: {topicFam}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: t.inkMid, fontFamily: "var(--font-ui)" }}>
+                          <span>Before:</span>
+                          <span style={{ fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 7px", borderRadius: "999px", background: t.surfaceEl, color: t.inkMid, fontFamily: "var(--font-ui)", fontWeight: 600, border: `1px solid ${t.border}` }}>{priorFam}</span>
+                          {priorInt != null && <span style={{ fontSize: "10px", color: t.inkDim }}>intensity <span style={{ color: t.inkMid, fontWeight: 600 }}>{priorInt}</span></span>}
+                          <span style={{ fontSize: "10px", color: t.inkDim }}>({priorJournals} entries)</span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "11px", color: t.inkMid, fontFamily: "var(--font-ui)" }}>
+                          <span>After:</span>
+                          <span style={{ fontSize: "9px", letterSpacing: "0.06em", textTransform: "uppercase", padding: "2px 7px", borderRadius: "999px", background: t.emberSoft, color: t.ember, fontFamily: "var(--font-ui)", fontWeight: 600, border: `1px solid ${t.border}` }}>{currFam}</span>
+                          {currInt != null && <span style={{ fontSize: "10px", color: t.inkDim }}>intensity <span style={{ color: t.inkMid, fontWeight: 600 }}>{currInt}</span></span>}
+                        </div>
+                        {priorInt != null && currInt != null && (
+                          <div style={{ fontSize: "10px", color: t.inkDim, fontFamily: "var(--font-ui)" }}>
+                            Shift: {currInt < priorInt ? "↓" : currInt > priorInt ? "↑" : "→"}{" "}
+                            {Math.abs(parseFloat(currInt) - parseFloat(priorInt)).toFixed(1)} — {currInt < priorInt ? "softer emotional tone" : currInt > priorInt ? "heightened emotional tone" : "stable intensity"}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
