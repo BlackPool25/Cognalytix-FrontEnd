@@ -1,3 +1,5 @@
+![Cognalytix Frontend Banner](docs/images/banner.jpg)
+
 # Cognalytix — Frontend
 
 **Self-discovery mirror UI** for the Cognalytix journaling product. Built with React 19, Vite 6, and plain CSS (no framework). Theme adapts to a warm vintage-paper aesthetic in light and dark modes.
